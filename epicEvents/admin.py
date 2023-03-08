@@ -1,6 +1,6 @@
 from django.contrib import admin
 from authentication.models import User
-from epicEvents.models import Client,Contract,Event
+from epicEvents.models import Client,Contract,Event,EventStatus
 
 # Register your models here.
 

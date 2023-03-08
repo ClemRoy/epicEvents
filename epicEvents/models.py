@@ -1,9 +1,8 @@
-from django.db import models
 from django.conf import settings
-# Create your models here.
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+# Create your models here.
 
 
 class Client(models.Model):
@@ -18,11 +17,14 @@ class Client(models.Model):
     mobile = models.CharField(max_length=20)
     phone = models.CharField(max_length=20)
     client_status = models.CharField(
-        max_length=20, choices=CLIENT_STATUS_CHOICES)
+        max_length=20, default='potential', choices=CLIENT_STATUS_CHOICES)
     sales_contact = models.ForeignKey(
         settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "Client: " + self.company_name
 
 
 class Contract(models.Model):
@@ -30,31 +32,44 @@ class Contract(models.Model):
         ('negotiation', 'Contract in Negotiation'),
         ('signed', 'Contract is signed'),
     ]
-    client = models.ForeignKey(Client, blank=True, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
     sales_contact = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=True,null=True, on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     contract_status = models.CharField(
-        max_length=20, choices=CONTRACT_STATUS_CHOICES)
-    amount_due = models.FloatField(blank=True)
-    payment_due_date = models.DateField(blank=True)
+        max_length=20, default='negotiation', choices=CONTRACT_STATUS_CHOICES)
+    amount_due = models.FloatField()
+    payment_due_date = models.DateField()
+
+    def __str__(self):
+        return "Contrat:" + str(self.client) + " " + str(self.date_created)
+
+
+class EventStatus(models.Model):
+    EVENT_STATUS_CHOICES = [
+        ('preparation', 'In Preparation'),
+        ('ongoig', 'On going'),
+        ('finished', 'Finished')
+    ]
+    status = models.CharField(max_length=20, choices=EVENT_STATUS_CHOICES)
+
+    def __str__(self):
+        return "Event Status:" + self.status
 
 
 class Event(models.Model):
-    EVENT_STATUS_CHOICES = [
-        ('preparation', 'In Preparation'),
-        ('ongoing', 'Ongoing'),
-        ('finished', 'Finished')
-    ]
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     support_contact = models.ForeignKey(
-        settings.AUTH_USER_MODEL, blank=True,null=True, on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, blank=True, null=True, on_delete=models.SET_NULL)
+    event_status = models.ForeignKey(
+        EventStatus, null=True, default='1', on_delete=models.SET_NULL)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    event_status = models.CharField(
-        max_length=20, choices=EVENT_STATUS_CHOICES)
-    attendee_number = models.IntegerField(blank=True)
-    event_date = models.DateField(blank=True)
-    notes = models.CharField(max_length=500, blank=True)
+    attendee_number = models.IntegerField()
+    event_date = models.DateField()
+    notes = models.CharField(max_length=500)
+
+    def __str__(self):
+        return "Event: " + str(self.contract)

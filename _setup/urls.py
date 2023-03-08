@@ -13,11 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView
+)
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from rest_framework import routers
-from rest_framework_simplejwt.views import (TokenObtainPairView,TokenRefreshView)
-from epicEvents.views import ClientViewset,ContractViewset,EventViewset
+
+from epicEvents.views import ClientViewset, ContractViewset, EventViewset, UserViewset
 
 
 router = routers.SimpleRouter()
@@ -28,5 +32,8 @@ router.register(r'event', EventViewset, basename="event")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('signup/', UserViewset.as_view({'post': 'create'}))
 ]
