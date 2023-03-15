@@ -35,6 +35,18 @@ class EventPermission(permissions.BasePermission):
         else:
             return False
 
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if isinstance(obj, Event):
+            if obj.support_contact == user and user.is_support():
+                return True
+            else:
+                return False
+
 
 class ClientAndContractPermission(permissions.BasePermission):
 
@@ -57,5 +69,22 @@ class ClientAndContractPermission(permissions.BasePermission):
 
         else:
             return False
+
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        if isinstance(obj, Client):
+            if obj.sales_contact == user and user.is_commercial():
+                return True
+            else:
+                return False
+        elif isinstance(obj,Contract):
+            if obj.sales_contact == user:
+                return True
+            else:
+                return False
 
 """ has object perm pour verifier propr. """

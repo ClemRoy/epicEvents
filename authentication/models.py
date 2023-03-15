@@ -68,3 +68,11 @@ class User(AbstractBaseUser, PermissionsMixin):
             self._is_support = self.groups.filter(
                 name="support").exists()
             return self._is_support
+    
+    def __str__(self):
+        if self.groups.exists():
+            return f"id: {self.pk}, email :{self.email}, group: {''.join(self.groups.all().values_list('name', flat=True))}"
+        elif self.is_superuser:
+            return f"id: {self.pk}, email :{self.email}, group: manager"
+        else:
+            return f"id: {self.pk}, email :{self.email}, /!\ User is not assigned to a group /!\ "
