@@ -30,13 +30,13 @@ class EventPermission(permissions.BasePermission):
         if view.action in ['list', 'retrieve']:
             return True
 
-        if view.action is 'destroy':
+        if view.action == 'destroy':
             if user.is_superuser:
                 return True
             else:
                 return False
 
-        if view.action is 'create':
+        if view.action == 'create':
             if user.is_commercial():
                 return True
             else:
@@ -98,7 +98,7 @@ class ClientAndContractPermission(permissions.BasePermission):
         if view.action in ['list', 'retrieve']:
             return True
 
-        if view.action is 'destroy':
+        if view.action == 'destroy':
             if user.is_superuser:
                 return True
             else:

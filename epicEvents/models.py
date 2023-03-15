@@ -87,6 +87,9 @@ class EventStatus(models.Model):
 
     Note:
         /!\This object instance should never be modified by the users.
+        ID 1 = In Preparation
+        ID 2 = On Going
+        ID 3 = Finished
 
     Attributes:
         EVENT_STATUS_CHOICES (tuple): The available choices for the event status.
