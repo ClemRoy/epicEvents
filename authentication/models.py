@@ -7,9 +7,13 @@ from django.contrib.auth.models import (
 
 
 class UserManager(BaseUserManager):
+    """
+        Creates and saves a User with the given email,and password.
+    """
 
     def _create_user(self, email, password, **extra_fields):
         """
+        private function
         Creates and saves a User with the given email,and password.
         """
         if not email:
@@ -24,6 +28,22 @@ class UserManager(BaseUserManager):
             raise
 
     def create_user(self, email, password=None, **extra_fields):
+        """
+        Create and save a new User instance with the given email and password.
+
+        Args:
+            email (str): The email address of the user.
+            password (str, optional): The password for the user. If no password is provided,
+                a random password will be generated and assigned to the user.
+            **extra_fields: Additional fields to be saved on the User instance, such as
+                first_name and last_name.
+
+        Returns:
+            User: The newly created User instance.
+
+        Raises:
+            ValueError: If no email is provided.
+        """
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(email, password, **extra_fields)
@@ -36,7 +56,20 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Creates and saves a superuser with the given email and password.
 
+    Args:
+        email (str): The email address for the superuser.
+        password (str): The password for the superuser.
+        **extra_fields (dict): Additional fields to save with the superuser.
+
+    Returns:
+        User: The newly created superuser.
+
+    Raises:
+        ValueError: If the email is not provided.
+    """
     email = models.EmailField(max_length=60, unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -51,6 +84,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name', 'password']
 
     def save(self, *args, **kwargs):
+        """Override the default save method to save the User object in the database and return the object itself.
+
+        Args:
+            *args: Optional positional arguments to be passed to the parent class's save method.
+            **kwargs: Optional keyword arguments to be passed to the parent class's save method.
+
+        Returns:
+            The saved User object.
+        """
         super(User, self).save(*args, **kwargs)
         return self
 
@@ -61,18 +103,26 @@ class User(AbstractBaseUser, PermissionsMixin):
                 name="commercial").exists()
             return self._is_commercial
 
-
     def is_support(self):
         """Return True if the user is in the Support Group or False"""
         if not hasattr(self, '_is_support'):
             self._is_support = self.groups.filter(
                 name="support").exists()
             return self._is_support
-    
+
     def full_name(self):
+        """
+        Returns the user's full name by concatenating their first name and last name.
+        """
         return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
+        """
+        Return a string representation of the User object.
+        If the user belongs to one or more groups, the string representation will include the user's id, email, and group(s) name(s) as a comma-separated list.
+        If the user is a superuser, the string representation will include the user's id, email, and a note that the user is a manager.
+        If the user does not belong to any group, the string representation will include the user's id, email, and a warning that the user is not assigned to any group.
+        """
         if self.groups.exists():
             return f"id: {self.pk}, email :{self.email}, group: {''.join(self.groups.all().values_list('name', flat=True))}"
         elif self.is_superuser:

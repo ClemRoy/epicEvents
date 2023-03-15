@@ -5,10 +5,23 @@ from epicEvents.models import Client, Contract, Event
 
 
 class EventPermission(permissions.BasePermission):
+    """
+    Permission class that determines whether a user has the necessary permissions to perform a given action on an Event object.
+    """
 
     message = "You do not have the permission to perform this action"
 
     def has_permission(self, request, view):
+        """
+        Returns a boolean indicating whether the user has permission to perform the given action on the Event object.
+        
+        Parameters:
+        - request: The HTTP request object.
+        - view: The view that is being accessed.
+        
+        Returns:
+        - A boolean indicating whether the user has permission to perform the given action.
+        """
         user = request.user
 
         if user.is_superuser:
@@ -39,6 +52,17 @@ class EventPermission(permissions.BasePermission):
             return False
 
     def has_object_permission(self, request, view, obj):
+        """
+        Returns a boolean indicating whether the user has permission to perform the given action on the given Event object.
+        
+        Parameters:
+        - request: The HTTP request object.
+        - view: The view that is being accessed.
+        - obj: The Event object being accessed.
+        
+        Returns:
+        - A boolean indicating whether the user has permission to perform the given action on the given Event object.
+        """
         user = request.user
 
         if request.method in permissions.SAFE_METHODS:
@@ -52,10 +76,20 @@ class EventPermission(permissions.BasePermission):
 
 
 class ClientAndContractPermission(permissions.BasePermission):
+    """
+    Permission class for Client and Contract models.
+    Users can only perform actions based on their role:
+    - Superuser: all actions
+    - Commercial: view and create clients and contracts, view and edit their own clients and contracts
+    - Support: view events and contracts, edit events and contracts they support
+    """
 
     message = "You do not have the permission to perform this action"
 
     def has_permission(self, request, view):
+        """
+        Check if user has permission to perform the given action.
+        """
         user = request.user
 
         if user.is_superuser:
@@ -77,6 +111,9 @@ class ClientAndContractPermission(permissions.BasePermission):
             return False
 
     def has_object_permission(self, request, view, obj):
+        """
+        Check if user has permission to perform the given action on the object.
+        """
         user = request.user
 
         if request.method in permissions.SAFE_METHODS:

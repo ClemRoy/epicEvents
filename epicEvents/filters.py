@@ -22,6 +22,17 @@ class ClientFilterSet(filters.FilterSet):
     email = filters.CharFilter(field_name='email', lookup_expr='iexact')
 
     def filter_full_name(self, queryset, name, value):
+        """
+        Filter the given queryset by searching for a case-insensitive match on either the first name or last name fields.
+
+        Args:
+            queryset: The queryset to filter.
+            name: The name of the filter, which is ignored in this case.
+            value: The value to search for.
+
+        Returns:
+            A filtered queryset.
+        """
         queryset = queryset.filter(
             Q(first_name__iexact=value) |
             Q(last_name__iexact=value)
@@ -66,6 +77,17 @@ class ContractFilterSet(filters.FilterSet):
     amount = filters.NumberFilter(field_name='amount_due')
 
     def filter_client_full_name(self, queryset, name, value):
+        """
+        Filter the given queryset by searching for a case-insensitive match on either the first name or last name fields.
+
+        Args:
+            queryset: The queryset to filter.
+            name: The name of the filter, which is ignored in this case.
+            value: The value to search for.
+
+        Returns:
+            A filtered queryset.
+        """
         queryset = queryset.filter(
             Q(client__first_name__iexact=value) |
             Q(client__last_name__iexact=value)
@@ -100,6 +122,17 @@ class EventFilterSet(filters.FilterSet):
         field_name='event_date', lookup_expr='exact')
 
     def filter_client_full_name(self, queryset, name, value):
+        """
+        Filter the given queryset by searching for a case-insensitive match on either the first name or last name fields.
+
+        Args:
+            queryset: The queryset to filter.
+            name: The name of the filter, which is ignored in this case.
+            value: The value to search for.
+
+        Returns:
+            A filtered queryset.
+        """
         queryset = queryset.filter(
             Q(client__first_name__iexact=value) |
             Q(client__last_name__iexact=value)
