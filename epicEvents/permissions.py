@@ -11,6 +11,9 @@ class EventPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         user = request.user
 
+        if user.is_superuser:
+            return True
+
         if view.action in ['list', 'retrieve']:
             return True
 
@@ -55,6 +58,9 @@ class ClientAndContractPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         user = request.user
 
+        if user.is_superuser:
+            return True
+
         if view.action in ['list', 'retrieve']:
             return True
 
@@ -86,5 +92,3 @@ class ClientAndContractPermission(permissions.BasePermission):
                 return True
             else:
                 return False
-
-""" has object perm pour verifier propr. """

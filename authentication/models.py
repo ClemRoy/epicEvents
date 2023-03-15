@@ -69,6 +69,9 @@ class User(AbstractBaseUser, PermissionsMixin):
                 name="support").exists()
             return self._is_support
     
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         if self.groups.exists():
             return f"id: {self.pk}, email :{self.email}, group: {''.join(self.groups.all().values_list('name', flat=True))}"

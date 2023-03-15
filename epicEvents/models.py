@@ -23,6 +23,9 @@ class Client(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         return f"Id: {self.pk}, Client: {self.company_name}"
 

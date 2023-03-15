@@ -2,9 +2,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import viewsets
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from epicEvents.models import Client, Contract, Event
 from epicEvents.permissions import EventPermission, ClientAndContractPermission
 from epicEvents.serializers import ClientSerialier, ContractSerializer, EventSerializer, UserSerializer
+from .filters import ClientFilterSet, ContractFilterSet, EventFilterSet
 
 # Create your views here.
 
@@ -13,39 +16,29 @@ class ClientViewset(viewsets.ModelViewSet):
     serializer_class = ClientSerialier
     queryset = Client.objects.all()
     permission_classes = [IsAuthenticated, ClientAndContractPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = ClientFilterSet
+    search_fields = ['full_name', 'last_name', 'email']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = self.filter_queryset(queryset)
+        return queryset
 
     def list(self, request):
-        """
-        List all the clients that the requesting user is allowed to see.
-
-        If the requesting user is a commercial user, only the clients where the user
-        is the sales contact are listed. If the user is a support user, only the clients
-        where the user has been in contact with through an event are listed.
-
-        Returns a JSON response containing a list of serialized clients.
-        """
         user = request.user
         if user.is_commercial():
             queryset = Client.objects.filter(sales_contact=user)
+            queryset = self.filter_queryset(queryset)
         elif user.is_support():
             user_clients_id = Event.objects.filter(
                 support_contact=user).values_list('client_id', flat=True).distinct()
             queryset = Client.objects.filter(id__in=user_clients_id)
+            queryset = self.filter_queryset(queryset)
         serializer = ClientSerialier(queryset, many=True)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        """
-        Create a new contract instance and set the sales_contact attribute to the requesting user.
-
-        Args:
-            request: The HTTP request object.
-            *args: Additional positional arguments.
-            **kwargs: Additional keyword arguments.
-
-        Returns:
-            A HTTP response with the serialized data of the created contract instance and the status code 201 if the request data is valid, or a HTTP response with the validation errors and the status code 400 if the request data is invalid.
-        """
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.validated_data['sales_contact'] = request.user
@@ -60,14 +53,12 @@ class ContractViewset(viewsets.ModelViewSet):
     serializer_class = ContractSerializer
     queryset = Contract.objects.all()
     permission_classes = [IsAuthenticated, ClientAndContractPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_class = ContractFilterSet
+    search_fields = ['client_email', 'client_full_name',
+                     'last_name', 'date_created', 'amount']
 
     def get_client(self, request):
-        """
-        Returns the client object based on the client ID passed in the request data.
-
-        :param request: The request object containing the client ID in the data field.
-        :return: The client object if found, otherwise None.
-        """
         client_pk = request.data.get('client')
         if client_pk:
             try:
@@ -77,9 +68,15 @@ class ContractViewset(viewsets.ModelViewSet):
         return None
 
     def list(self, request):
-        queryset = Contract.objects.filter(sales_contact=request.user)
-        serializer = ContractSerializer(queryset, many=True)
-        return Response(serializer.data)
+        user = request.user
+        if user.is_commercial():
+            queryset = Contract.objects.filter(sales_contact=request.user)
+            queryset = self.filter_queryset(queryset)
+            serializer = ContractSerializer(queryset, many=True)
+            return Response(serializer.data)
+        elif user.is_support():
+            message = "Support users can't access Contratcs"
+            return Response({'message': message})
 
     def create(self, request, *args, **kwargs):
         """
@@ -121,6 +118,10 @@ class EventViewset(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     queryset = Event.objects.all()
     permission_classes = [IsAuthenticated, EventPermission]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = EventFilterSet
+    search_fields = ['client_email', 'client_full_name',
+                     'last_name', 'event_date']
 
     def get_client(self, request):
         client_pk = request.data.get('client')
@@ -147,9 +148,17 @@ class EventViewset(viewsets.ModelViewSet):
             return True
 
     def list(self, request):
-        queryset = Event.objects.filter(support_contact=request.user)
-        serializer = EventSerializer(queryset, many=True)
-        return Response(serializer.data)
+        user = request.user
+        if user.is_support():
+            queryset = Event.objects.filter(support_contact=request.user)
+            queryset = self.filter_queryset(queryset)
+            serializer = EventSerializer(queryset, many=True)
+            return Response(serializer.data)
+        elif user.is_commercial():
+            queryset = Event.objects.filter(client__sales_contact=request.user)
+            queryset = self.filter_queryset(queryset)
+            serializer = EventSerializer(queryset, many=True)
+            return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         client = self.get_client(request)
