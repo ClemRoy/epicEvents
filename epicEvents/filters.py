@@ -73,7 +73,7 @@ class ContractFilterSet(filters.FilterSet):
     last_name = filters.CharFilter(
         field_name='client__last_name', lookup_expr='iexact')
     date_created = filters.DateFilter(
-        field_name='date_created', lookup_expr='exact')
+        field_name='date_created', lookup_expr='icontains')
     payment_due_date = filters.DateFilter(
         field_name='payment_due_date', lookup_expr='exact')
     amount = filters.NumberFilter(field_name='amount_due')
