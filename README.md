@@ -1,14 +1,8 @@
-# OCMovies-API: Test API providing movie information
-
-The OCMovies-API project is a REST API application to be executed locally in the context
-of educational projects. It provides movie information from GET http endpoints.
-The API provides these endpoints to get detailed infomation about movies filtered by
-various criteria such as genre, IMDB score or year. Endpoints allow users to retrieve
-information for individual movies or lists of movies.
+# epicEvents
 
 ## Installation
 
-This locally-executable API can be installed and executed from [http://localhost:8000/api/v1/titles/](http://localhost:8000/api/v1/titles/) using the following steps.
+This locally-executable API can be installed and executed from [http://localhost:8000//](http://localhost:8000/) using the following steps.
 
 
 1. Clone this repository using `$ git clone clone https://github.com/ClemRoy/epicEvents.git` (you can also download the code using [as a zip file](https://github.com/ClemRoy/epicEvents/archive/refs/heads/master.zip))
@@ -16,13 +10,12 @@ This locally-executable API can be installed and executed from [http://localhost
 3. Create a virtual environment for the project with `$ py -m venv env` on windows or `$ python3 -m venv env` on macos or linux.
 4. Activate the virtual environment with `$ env\Scripts\activate` on windows or `$ source env/bin/activate` on macos or linux.
 5. Install project dependencies with `$ pip install -r requirements.txt`
-6. Create and populate the project database with `$ python manage.py create_db`
-7. Run the server with `$ python manage.py runserver`
+6. Run the server with `$ python manage.py runserver`
 
 When the server is running after step 7 of the procedure, the epicEvents-API can be requested from endpoints starting with the following base URL: http://localhost:8000/client/,http://localhost:8000/contract/,http://localhost:8000/event/ 
 and http://localhost:8000/signup/ (which is limited to superuser for the account creation).
 
-Steps 1-3 and 5-6 are only required for initial installation. For subsequent launches of the API, you only have to execute steps 4 and 7 from the root folder of the project.
+Steps 1-3 and 5 is only required for initial installation. For subsequent launches of the API, you only have to execute steps 4 and 6 from the root folder of the project.
 
 ## Usage and detailed endpoint documentation
 
