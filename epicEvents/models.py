@@ -112,7 +112,7 @@ class EventStatus(models.Model):
         Returns:
             str: A string representing the status of the event.
         """
-        return f"Event Status: {self.status}"
+        return f"Id: {self.pk} Event Status: {self.status}"
 
 
 class Event(models.Model):

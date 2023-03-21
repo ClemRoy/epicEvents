@@ -16,9 +16,9 @@ class ClientFilterSet(filters.FilterSet):
     - filter_full_name: Custom filter method to filter by client's full name.
     """
 
-    full_name = filters.CharFilter(method='filter_by_fullname')
+    full_name = filters.CharFilter(method='filter_full_name')
     last_name = filters.CharFilter(
-        field_name="last_name", lookup_expr='name__iexact')
+        field_name="last_name", lookup_expr='icontains')
     email = filters.CharFilter(field_name='email', lookup_expr='iexact')
 
     def filter_full_name(self, queryset, name, value):
@@ -34,8 +34,8 @@ class ClientFilterSet(filters.FilterSet):
             A filtered queryset.
         """
         queryset = queryset.filter(
-            Q(first_name__iexact=value) |
-            Q(last_name__iexact=value)
+            Q(first_name__icontains=value) |
+            Q(last_name__icontains=value)
         )
         return queryset
 
@@ -73,7 +73,9 @@ class ContractFilterSet(filters.FilterSet):
     last_name = filters.CharFilter(
         field_name='client__last_name', lookup_expr='iexact')
     date_created = filters.DateFilter(
-        field_name='date_created', lookup_expr='iexact')
+        field_name='date_created', lookup_expr='exact')
+    payment_due_date = filters.DateFilter(
+        field_name='payment_due_date', lookup_expr='exact')
     amount = filters.NumberFilter(field_name='amount_due')
 
     def filter_client_full_name(self, queryset, name, value):
@@ -89,14 +91,14 @@ class ContractFilterSet(filters.FilterSet):
             A filtered queryset.
         """
         queryset = queryset.filter(
-            Q(client__first_name__iexact=value) |
-            Q(client__last_name__iexact=value)
+            Q(client__first_name__icontains=value) |
+            Q(client__last_name__icontains=value)
         )
         return queryset
 
     class Meta:
         model = Contract
-        fields = ['client_email', 'client_full_name',
+        fields = ['client_email', 'client_full_name',"payment_due_date",
                   'last_name', 'date_created', 'amount']
 
 
@@ -134,8 +136,8 @@ class EventFilterSet(filters.FilterSet):
             A filtered queryset.
         """
         queryset = queryset.filter(
-            Q(client__first_name__iexact=value) |
-            Q(client__last_name__iexact=value)
+            Q(client__first_name__icontains=value) |
+            Q(client__last_name__icontains=value)
         )
         return queryset
 

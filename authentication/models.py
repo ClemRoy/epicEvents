@@ -99,16 +99,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def is_commercial(self):
         """Return True if the user is in the Commercial Group or False"""
         if not hasattr(self, '_is_commercial'):
-            self._is_commercial = self.groups.filter(
-                name="commercial").exists()
-            return self._is_commercial
+            self._is_commercial = self.groups.filter(name="commercial").exists()
+        return self._is_commercial
 
     def is_support(self):
         """Return True if the user is in the Support Group or False"""
         if not hasattr(self, '_is_support'):
             self._is_support = self.groups.filter(
                 name="support").exists()
-            return self._is_support
+        return self._is_support
 
     def full_name(self):
         """

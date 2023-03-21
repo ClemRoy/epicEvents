@@ -171,7 +171,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'email', 'password']
 
 
-class ClientSerialier(serializers.ModelSerializer):
+class ClientSerializer(serializers.ModelSerializer):
     """
     Serializer class for Client model.
 

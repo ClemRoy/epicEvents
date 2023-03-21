@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from epicEvents.models import Client, Contract, Event
 from epicEvents.permissions import EventPermission, ClientAndContractPermission
-from epicEvents.serializers import ClientSerialier, ContractSerializer, EventSerializer, UserSerializer
+from epicEvents.serializers import ClientSerializer, ContractSerializer, EventSerializer, UserSerializer
 from .filters import ClientFilterSet, ContractFilterSet, EventFilterSet
 
 # Create your views here.
@@ -26,21 +26,13 @@ class ClientViewset(viewsets.ModelViewSet):
     This viewset supports filtering and searching by client name and email.
 
     """
-    serializer_class = ClientSerialier
+    serializer_class = ClientSerializer
     queryset = Client.objects.all()
     permission_classes = [IsAuthenticated, ClientAndContractPermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = ClientFilterSet
     search_fields = ['full_name', 'last_name', 'email']
 
-    def get_queryset(self):
-        """
-        Return the queryset of all clients. This method is called by the view's list() and \n
-        retrieve() methods to retrieve the queryset for the current request.
-        """
-        queryset = super().get_queryset()
-        queryset = self.filter_queryset(queryset)
-        return queryset
 
     def list(self, request):
         """
@@ -50,7 +42,7 @@ class ClientViewset(viewsets.ModelViewSet):
         For support users, only clients with events they are the support contact for will
         be returned. All other users will receive a list of all clients.
 
-        Clients can be filtered by name and email using the `search` parameter in the
+        Clients can be filtered by name and email using the `search` parameter in thess
         query string. Additionally, clients can be filtered using any of the fields in
         the `ClientFilterSet`.
 
@@ -66,7 +58,7 @@ class ClientViewset(viewsets.ModelViewSet):
                 support_contact=user).values_list('client_id', flat=True).distinct()
             queryset = Client.objects.filter(id__in=user_clients_id)
             queryset = self.filter_queryset(queryset)
-        serializer = ClientSerialier(queryset, many=True)
+        serializer = ClientSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):

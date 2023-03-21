@@ -23,31 +23,27 @@ class EventPermission(permissions.BasePermission):
         - A boolean indicating whether the user has permission to perform the given action.
         """
         user = request.user
-
+        
         if user.is_superuser:
             return True
-
-        if view.action in ['list', 'retrieve']:
-            return True
-
-        if view.action == 'destroy':
-            if user.is_superuser:
+        if user.is_commercial() or user.is_support():
+            if view.action in ['list', 'retrieve']:
                 return True
-            else:
-                return False
-
-        if view.action == 'create':
-            if user.is_commercial():
-                return True
-            else:
-                return False
-            
-        if view.action in ['update','partial_update']:
-            if user.is_support():
-                return True
-            else:
-                return False
-            
+            if view.action == 'destroy':
+                if user.is_superuser:
+                    return True
+                else:
+                    return False
+            if view.action == 'create':
+                if user.is_commercial():
+                    return True
+                else:
+                    return False
+            if view.action in ['update','partial_update']:
+                if user.is_support():
+                    return True
+                else:
+                    return False
         else:
             return False
 
@@ -94,19 +90,18 @@ class ClientAndContractPermission(permissions.BasePermission):
 
         if user.is_superuser:
             return True
-
-        if view.action in ['list', 'retrieve']:
-            return True
-
-        if view.action == 'destroy':
-            if user.is_superuser:
+        if user.is_commercial() or user.is_support():
+            if view.action in ['list', 'retrieve']:
                 return True
-            else:
-                return False
 
-        if user.is_commercial():
-            return True
+            if view.action == 'destroy':
+                if user.is_superuser:
+                    return True
+                else:
+                    return False
 
+            if user.is_commercial():
+                return True
         else:
             return False
 
