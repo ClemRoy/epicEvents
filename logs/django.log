@@ -3711,3 +3711,41 @@ Traceback (most recent call last):
     raise FieldError(
 django.core.exceptions.FieldError: Cannot resolve keyword 'date_createdwhat' into field. Choices are: amount_due, client, client_id, contract_status, date_created, date_updated, event, id, payment_due_date, sales_contact, sales_contact_id
 "GET /contract/?date_created=2023-03-21 HTTP/1.1" 500 175699
+Internal Server Error: /client/
+Traceback (most recent call last):
+  File "E:\L12\Livrable\env\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "E:\L12\Livrable\env\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\L12\Livrable\env\lib\site-packages\django\views\decorators\csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "E:\L12\Livrable\env\lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "E:\L12\Livrable\env\lib\site-packages\rest_framework\views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+  File "E:\L12\Livrable\env\lib\site-packages\rest_framework\views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "E:\L12\Livrable\env\lib\site-packages\rest_framework\views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "E:\L12\Livrable\env\lib\site-packages\rest_framework\views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "E:\L12\Livrable\epicEvents\views.py", line 61, in list
+    serializer = ClientSerializer(queryset, many=True)
+UnboundLocalError: local variable 'queryset' referenced before assignment
+"GET /client/?email=armstrongjessica@example.org HTTP/1.1" 500 91837
+Internal Server Error: /contract/
+Traceback (most recent call last):
+  File "E:\L12\Livrable\env\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "E:\L12\Livrable\env\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "E:\L12\Livrable\env\lib\site-packages\django\views\decorators\csrf.py", line 54, in wrapped_view
+    return view_func(*args, **kwargs)
+  File "E:\L12\Livrable\env\lib\site-packages\rest_framework\viewsets.py", line 125, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "E:\L12\Livrable\env\lib\site-packages\rest_framework\views.py", line 511, in dispatch
+    self.response = self.finalize_response(request, response, *args, **kwargs)
+  File "E:\L12\Livrable\env\lib\site-packages\rest_framework\views.py", line 423, in finalize_response
+    assert isinstance(response, HttpResponseBase), (
+AssertionError: Expected a `Response`, `HttpResponse` or `HttpStreamingResponse` to be returned from the view, but received a `<class 'NoneType'>`
+"GET /contract/ HTTP/1.1" 500 78566

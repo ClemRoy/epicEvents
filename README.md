@@ -20,7 +20,7 @@ Steps 1-3 and 5 is only required for initial installation. For subsequent launch
 ## Usage and detailed endpoint documentation
 
 
-The API provides the following endpoints.
+The API provides multiple endpoint.You can access the postman documentation with the relevant endpoint here: https://documenter.getpostman.com/view/19443765/2s93RL2Ght.
 
 - Client: Allow user to see the clients according to their respective attribution,allow the creation and modification of new client with post request, destroy request are limited to superuser.
 
